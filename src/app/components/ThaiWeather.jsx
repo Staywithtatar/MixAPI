@@ -2,6 +2,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 const ThaiWeather = () => {
   const [weatherData, setWeatherData] = useState([]);
@@ -27,7 +28,7 @@ const ThaiWeather = () => {
         const weatherResults = results.map((data, index) => ({
           ...data,
           nameTH: cities[index].nameTH,
-          cityId: cities[index].id // เพิ่ม cityId เพื่อใช้เป็น key
+          cityId: cities[index].id
         }));
         setWeatherData(weatherResults);
       } catch (error) {
@@ -38,7 +39,7 @@ const ThaiWeather = () => {
     };
 
     fetchWeather();
-  }, []);
+  }, [cities]); // เพิ่ม cities เป็น dependency
 
   return (
     <div className="mt-16 max-w-6xl mx-auto px-4">
@@ -49,7 +50,7 @@ const ThaiWeather = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {weatherData.map((city) => (
             <div 
-              key={city.cityId} // ใช้ cityId เป็น key
+              key={city.cityId}
               className="bg-white/10 backdrop-blur-sm rounded-xl p-4
                         hover:bg-white/20 transition-all duration-300
                         border border-blue-300/30 hover:border-blue-400/50"
@@ -57,11 +58,14 @@ const ThaiWeather = () => {
               <div className="text-center">
                 <h3 className="text-xl font-semibold text-white mb-2">{city.nameTH}</h3>
                 {city.weather && city.weather[0] && (
-                  <img 
-                    src={`https://openweathermap.org/img/wn/${city.weather[0].icon}@2x.png`}
-                    alt={city.weather[0].description}
-                    className="w-16 h-16 mx-auto"
-                  />
+                  <div className="relative w-16 h-16 mx-auto">
+                    <Image
+                      src={`https://openweathermap.org/img/wn/${city.weather[0].icon}@2x.png`}
+                      alt={city.weather[0].description}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                 )}
                 <div className="text-3xl text-white font-bold mb-2">
                   {Math.round(city.main?.temp || 0)}°C
